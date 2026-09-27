@@ -1,0 +1,283 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+ * Dark mode strategy
+ * Theme is driven by a `data-theme` attribute on <html> (see index.html inline
+ * script + useTheme hook). A custom variant lets us use the familiar
+ * `dark:` prefix with class-independent toggling.
+ * ------------------------------------------------------------------------ */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------------------------------------------------------------------------
+ * Design tokens — static scales
+ * ------------------------------------------------------------------------ */
+@theme {
+  --font-sans:
+    'Plus Jakarta Sans', 'Inter var', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  /* Brand - Teal/Emerald */
+  --color-brand-50: #e6faf7;
+  --color-brand-100: #ccf5ef;
+  --color-brand-200: #99ebe0;
+  --color-brand-300: #4dd9c8;
+  --color-brand-400: #1ac4ad;
+  --color-brand-500: #00A896;
+  --color-brand-600: #008577;
+  --color-brand-700: #006359;
+  --color-brand-800: #00423c;
+  --color-brand-900: #002120;
+  --color-brand-950: #001110;
+
+  --radius-xl2: 1.125rem;
+  --radius-4xl: 2rem;
+
+  --shadow-soft: 0 1px 2px rgb(16 18 27 / 0.04), 0 8px 24px -12px rgb(16 18 27 / 0.16);
+  --shadow-lift: 0 2px 4px rgb(16 18 27 / 0.05), 0 18px 40px -18px rgb(16 18 27 / 0.28);
+  --shadow-sheet: 0 -8px 48px -12px rgb(16 18 27 / 0.35);
+
+  --animate-fade-up: fade-up 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-scale-in: scale-in 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-sheet-up: sheet-up 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-typing-dot: typing-dot 1.2s ease-in-out infinite;
+  --animate-drift: drift 7s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes typing-dot {
+    0%,
+    60%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.35;
+    }
+    30% {
+      transform: translateY(-3px);
+      opacity: 1;
+    }
+  }
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(0, -10px, 0) scale(1.04);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Design tokens — semantic, theme-aware
+ * `inline` keeps the var() reference in the generated utility so these flip
+ * instantly when `data-theme` changes, with no re-render needed.
+ * ------------------------------------------------------------------------ */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+  --color-positive: var(--positive);
+  --color-caution: var(--caution);
+  --color-critical: var(--critical);
+}
+
+:root {
+  --surface: #ffffff;
+  --surface-sunken: #F5F5F5;
+  --surface-raised: #ffffff;
+  --surface-inverse: #111111;
+  --line: #E0E0E0;
+  --line-strong: #CCCCCC;
+  --ink: #131b2e;
+  --ink-muted: #464555;
+  --ink-subtle: #777587;
+  --ink-inverse: #ffffff;
+  --brand: #FF6F61;
+  --brand-soft: #FFF1F0;
+  --on-brand: #ffffff;
+  --positive: #0f9d6e;
+  --caution: #fd761a;
+  --critical: #ba1a1a;
+  
+  /* Bottom tab bar / composer clearance for iPhone home indicator. */
+  --tabbar-h: 4.25rem;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  /* Backgrounds — layered from darkest to lightest for elevation */
+  --surface:          #111111;   /* card / input surface */
+  --surface-sunken:   #000000;   /* page background — pure black */
+  --surface-raised:   #1A1A1A;   /* popovers, sheets */
+  --surface-inverse:  #eef0ff;
+
+  /* Borders — very subtle, just enough to separate cards */
+  --line:             rgba(255,255,255,0.08);
+  --line-strong:      rgba(255,255,255,0.16);
+
+  /* Text — near-white primary, readable secondary & muted */
+  --ink:              #F5F5F7;   /* primary text: soft white, not harsh */
+  --ink-muted:        #A0A0AC;   /* secondary text: clear mid-gray */
+  --ink-subtle:       #6E6E7A;   /* tertiary: labels, timestamps */
+  --ink-inverse:      #131b2e;
+
+  /* Brand — Coral */
+  --brand:            #FF6F61;
+  --brand-soft:       #331512;
+  --on-brand:         #ffffff;
+
+  /* Status colours — saturated enough to stand out on dark */
+  --positive:         #34d399;
+  --caution:          #fb923c;
+  --critical:         #f87171;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface-sunken text-ink font-sans antialiased;
+    /* Stop the whole page rubber-banding on iOS while inner lists scroll. */
+    overscroll-behavior-y: none;
+  }
+
+  /* Visible, consistent focus ring for keyboard users only. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  button,
+  [role='button'] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  textarea,
+  button,
+  select {
+    font: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+
+  .pb-safe {
+    padding-bottom: calc(var(--safe-b) + var(--tabbar-h));
+  }
+  .pt-safe {
+    padding-top: calc(var(--safe-t) + 0.5rem);
+  }
+  .h-safe-bottom {
+    height: calc(var(--safe-b) + var(--tabbar-h));
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .snap-x-mandatory {
+    scroll-snap-type: x mandatory;
+  }
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--surface-sunken) 0%,
+      var(--line) 40%,
+      var(--surface-sunken) 80%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+  .drag-none {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  /* Subtle noise/glow used behind the chat empty state. */
+  .aurora::before {
+    content: '';
+    position: absolute;
+    inset: -30% -10% auto -10%;
+    height: 22rem;
+    background:
+      radial-gradient(38% 60% at 20% 20%, color-mix(in oklab, var(--brand) 42%, transparent) 0%, transparent 70%),
+      radial-gradient(42% 55% at 85% 30%, color-mix(in oklab, var(--color-caution) 34%, transparent) 0%, transparent 72%);
+    filter: blur(12px);
+    pointer-events: none;
+  }
+}

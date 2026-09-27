@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="128" fill="#1E1B4B"/>
+  <!-- Custom S monogram formed by precision funnel apertures -->
+  <g transform="translate(64, 64)">
+    <!-- Upper loop of S created with converging architectural blades -->
+    <path d="M 64 80 C 64 80, 192 48, 300 80 C 324 87, 336 104, 336 128 C 336 160, 300 184, 250 192 L 140 210 C 80 220, 48 252, 48 296 C 48 340, 88 368, 140 376 L 320 376" stroke="#4F46E5" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Distillation focal point: golden ratio amber dot / refined gem at the core terminal -->
+    <circle cx="280" cy="192" r="18" fill="#F59E0B"/>
+    <!-- Refined precision horizontal sieve blades -->
+    <line x1="120" y1="136" x2="280" y2="136" stroke="#818CF8" stroke-width="16" stroke-linecap="round" opacity="0.9"/>
+    <line x1="160" y1="256" x2="300" y2="256" stroke="#C7D2FE" stroke-width="16" stroke-linecap="round" opacity="0.8"/>
+  </g>
+</svg>
