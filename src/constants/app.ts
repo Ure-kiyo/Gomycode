@@ -76,12 +76,12 @@ export const SEARCH_STAGES: ReadonlyArray<{ stage: SearchStage; label: string; d
   { stage: 'ranking', label: 'Ranking what actually fits', detail: 'value, reviews, fit' },
 ]
 
-export const PRICE_BOUNDS = { min: 0, max: 5000 } as const
+export const PRICE_BOUNDS = { min: 0, max: 500000 } as const
 export const PRICE_PRESETS: Array<{ id: string; label: string; max: number }> = [
-  { id: 'budget', label: 'Under 50 DA', max: 50 },
-  { id: 'value', label: 'Under 250 DA', max: 250 },
-  { id: 'mid', label: 'Under 1k DA', max: 1000 },
-  { id: 'premium', label: 'Under 2k DA', max: 2000 },
+  { id: 'budget', label: 'Under 10,000 DA', max: 10000 },
+  { id: 'value', label: 'Under 30,000 DA', max: 30000 },
+  { id: 'mid', label: 'Under 80k DA', max: 80000 },
+  { id: 'premium', label: 'Under 200k DA', max: 200000 },
   { id: 'flagship', label: 'No limit', max: PRICE_BOUNDS.max },
 ]
 
@@ -94,9 +94,9 @@ export const LANGUAGES: Array<{ code: LanguageCode; label: string; native: strin
 
 /** Query → category/stores shortcuts used by the chat empty state. */
 export const STARTER_QUERIES: string[] = [
-  'gaming laptop under 1000 DA',
+  'gaming laptop under 150000 DA',
   'noise cancelling headphones for travel',
-  'a 4K monitor under 400 DA',
+  'a 4K monitor under 60000 DA',
   'running shoes for marathon training',
 ]
 

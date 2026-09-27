@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { ROUTE_PATHS } from '@/constants/app'
 import { useUserStore } from '@/store/useUserStore'
@@ -11,14 +11,10 @@ export function AuthPage() {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('signup')
   const navigate = useNavigate()
   const markInteracted = useUserStore((state) => state.markInteracted)
-  const setProfile = useUserStore((state) => (profile: any) => {
-      useUserStore.setState({ profile })
-  })
+  const setProfile = useUserStore((state) => state.setProfile)
 
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -34,26 +30,11 @@ export function AuthPage() {
   const validate = () => {
     const newErrors: Record<string, string> = {}
     
-    if (mode === 'forgot') {
-      if (!email) newErrors.email = 'Email is required'
-      else if (!/^\S+@\S+\.\S+$/.test(email)) newErrors.email = 'Please enter a valid email address'
-      return newErrors
-    }
-
-    if (mode === 'signup' && !name) newErrors.name = 'Full Name is required'
-    
     if (!email) newErrors.email = 'Email is required'
     else if (!/^\S+@\S+\.\S+$/.test(email)) newErrors.email = 'Please enter a valid email address'
 
-    if (!password) {
+    if (mode === 'login' && !password) {
       newErrors.password = 'Password is required'
-    } else if (mode === 'signup') {
-      if (password.length < 8) newErrors.password = 'Password must be at least 8 characters'
-      else if (!/\d/.test(password)) newErrors.password = 'Password must contain at least one number'
-    }
-
-    if (mode === 'signup' && password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
     }
 
     return newErrors
@@ -75,28 +56,16 @@ export function AuthPage() {
       return
     }
 
-    if (mode === 'signup') {
-      const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
-      setProfile({
-        id: 'u_' + Date.now(),
-        name,
-        email,
-        avatarInitials: initials,
-        memberSince: new Date().toISOString().split('T')[0]
-      })
-      markInteracted()
-      navigate(ROUTE_PATHS.chat, { replace: true })
-    } else {
-      setProfile({
-        id: 'u_' + Date.now(),
-        name: 'Logged In User', // Would come from backend
-        email,
-        avatarInitials: email[0].toUpperCase(),
-        memberSince: new Date().toISOString().split('T')[0]
-      })
-      markInteracted()
-      navigate(ROUTE_PATHS.forYou, { replace: true })
-    }
+    const dateStr = new Date().toISOString().split('T')[0] ?? '2025-01-01'
+    setProfile({
+      id: 'u_' + Date.now(),
+      name: 'Logged In User',
+      email,
+      avatarInitials: (email[0] ?? 'U').toUpperCase(),
+      memberSince: dateStr
+    })
+    markInteracted()
+    navigate(ROUTE_PATHS.forYou, { replace: true })
   }
 
   if (mode === 'signup') {
@@ -109,12 +78,10 @@ export function AuthPage() {
         <div className="mb-8 flex flex-col items-center text-center">
           <Logo variant="stacked" className="text-brand h-12 w-auto mb-4" />
           <h1 className="text-2xl font-bold tracking-tight text-ink mt-2">
-            {mode === 'signup' ? 'Create an account' : mode === 'login' ? 'Welcome back' : 'Reset password'}
+            {mode === 'login' ? 'Welcome back' : 'Reset password'}
           </h1>
           <p className="text-sm text-ink-subtle mt-1 text-center">
-            {mode === 'signup' 
-              ? 'Join Sift to save your favourite products and get personalised recommendations.'
-              : mode === 'login'
+            {mode === 'login'
               ? 'Log in to see your saved products and tailored feed.'
               : 'Enter your email and we will send you a reset link.'}
           </p>
@@ -131,22 +98,6 @@ export function AuthPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="w-full space-y-4">
-            {mode === 'signup' && (
-              <div className="space-y-1">
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-ink-subtle" />
-                  <input 
-                    type="text" 
-                    placeholder="Full Name" 
-                    value={name}
-                    onChange={e => { setName(e.target.value); setErrors(prev => ({ ...prev, name: '' })) }}
-                    className={`w-full rounded-2xl bg-surface border ${errors.name ? 'border-critical' : 'border-ink-subtle/20'} py-3 pl-10 pr-4 text-ink focus:border-brand focus:ring-1 focus:ring-brand outline-none transition-colors`}
-                  />
-                </div>
-                {errors.name && <p className="text-xs text-critical pl-2">{errors.name}</p>}
-              </div>
-            )}
-
             <div className="space-y-1">
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-ink-subtle" />
@@ -161,7 +112,7 @@ export function AuthPage() {
               {errors.email && <p className="text-xs text-critical pl-2">{errors.email}</p>}
             </div>
 
-            {mode !== 'forgot' && (
+            {mode === 'login' && (
               <div className="space-y-1">
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-ink-subtle" />
@@ -184,22 +135,6 @@ export function AuthPage() {
               </div>
             )}
 
-            {mode === 'signup' && (
-              <div className="space-y-1">
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-ink-subtle" />
-                  <input 
-                    type={showPassword ? 'text' : 'password'} 
-                    placeholder="Confirm Password" 
-                    value={confirmPassword}
-                    onChange={e => { setConfirmPassword(e.target.value); setErrors(prev => ({ ...prev, confirmPassword: '' })) }}
-                    className={`w-full rounded-2xl bg-surface border ${errors.confirmPassword ? 'border-critical' : 'border-ink-subtle/20'} py-3 pl-10 pr-4 text-ink focus:border-brand focus:ring-1 focus:ring-brand outline-none transition-colors`}
-                  />
-                </div>
-                {errors.confirmPassword && <p className="text-xs text-critical pl-2">{errors.confirmPassword}</p>}
-              </div>
-            )}
-
             {mode === 'login' && (
               <div className="flex justify-end">
                 <button type="button" onClick={() => setMode('forgot')} className="text-sm font-medium text-brand hover:underline">
@@ -209,7 +144,7 @@ export function AuthPage() {
             )}
 
             <Button type="submit" variant="primary" className="w-full py-6 text-base font-semibold rounded-2xl mt-4">
-              {mode === 'signup' ? 'Create Account' : mode === 'login' ? 'Log In' : 'Send reset link'}
+              {mode === 'login' ? 'Log In' : 'Send reset link'}
             </Button>
           </form>
         )}
@@ -239,14 +174,12 @@ export function AuthPage() {
           <button 
             type="button"
             onClick={() => {
-              setMode(mode === 'login' ? 'signup' : 'login')
+              setMode('signup')
               setErrors({})
             }}
             className="text-sm text-ink-subtle hover:text-ink transition-colors"
           >
-            {mode === 'signup' 
-              ? 'Already have an account? Log in' 
-              : "Don't have an account? Sign up"}
+            Don't have an account? Sign up
           </button>
         </div>
       </div>

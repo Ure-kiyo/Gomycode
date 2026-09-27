@@ -13,9 +13,7 @@ export interface SignUpScreenProps {
 export function SignUpScreen({ onLoginClick }: SignUpScreenProps) {
   const navigate = useNavigate()
   const markInteracted = useUserStore((state) => state.markInteracted)
-  const setProfile = useUserStore((state) => (profile: any) => {
-    useUserStore.setState({ profile })
-  })
+  const setProfile = useUserStore((state) => state.setProfile)
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -51,12 +49,13 @@ export function SignUpScreen({ onLoginClick }: SignUpScreenProps) {
       .toUpperCase()
       .substring(0, 2)
 
+    const memberSinceStr = new Date().toISOString().split('T')[0] ?? '2025-01-01'
     setProfile({
       id: 'u_' + Date.now(),
       name: name.trim(),
       email: email.trim(),
-      avatarInitials: initials,
-      memberSince: new Date().toISOString().split('T')[0],
+      avatarInitials: initials || 'U',
+      memberSince: memberSinceStr,
     })
     markInteracted()
     navigate(ROUTE_PATHS.chat, { replace: true })

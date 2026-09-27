@@ -8,7 +8,7 @@ import { SuggestionChips } from '@/components/chat/SuggestionChips'
 import { ProductGrid } from '@/components/product/ProductGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Logo } from '@/components/ui/Logo'
-import { RefreshIcon, SparkleIcon } from '@/components/ui/icons'
+import { RefreshIcon } from '@/components/ui/icons'
 import { QUERY_KEYS, STARTER_QUERIES } from '@/constants/app'
 import { useCatalogStore } from '@/store/useCatalogStore'
 import { useChatStore } from '@/store/useChatStore'
@@ -88,8 +88,6 @@ export function ChatPage() {
     .reverse()
     .find((message) => message.role === 'assistant' && message.suggestions?.length)
 
-  // Heights: tabbar takes bottom space, composer is ~80px
-  const COMPOSER_H = 'var(--composer-h, 80px)'
 
   return (
     <div className="flex flex-col bg-surface-sunken" style={{ height: '100dvh' }}>

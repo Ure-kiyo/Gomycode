@@ -127,10 +127,10 @@ function scoreProduct(product: Product, query: ResolvedQuery): Scored {
   // "Samsung Galaxy S24 Ultra") — the category gate handles overall relevance.
   for (const term of query.terms) {
     const needle = term.toLowerCase()
-    if (product.title.toLowerCase().includes(needle)) relevanceScore += 14
+    if (matchesWholeWord(product.title.toLowerCase(), needle)) relevanceScore += 14
     if (product.tags.some((tag) => matchesWholeWord(tag, needle))) relevanceScore += 10
-    if (product.brand.toLowerCase().includes(needle)) relevanceScore += 12
-    if (product.blurb.toLowerCase().includes(needle)) relevanceScore += 4
+    if (matchesWholeWord(product.brand.toLowerCase(), needle)) relevanceScore += 12
+    if (matchesWholeWord(product.blurb.toLowerCase(), needle)) relevanceScore += 4
     // Also match against the product's category name and keywords (whole-word)
     const cat = CATEGORY_MAP[product.category]
     if (cat) {
@@ -211,35 +211,11 @@ export function searchProducts(
   return { matchedProducts, matchedCategory, confidence, suggestedFallbackCategories, relaxed: false }
 }
 
-/**
- * Progressive relaxation: when a heavily-filtered query returns nothing,
- * drop constraints one at a time until we surface something relevant.
- *
- * INTENTIONALLY NOT DROPPING category or terms: those are the semantic anchor.
- * Dropping them would return completely unrelated products for queries like
- * "car" or "pet dog".
- */
-const RELAX_ORDER: Array<(q: ResolvedQuery) => ResolvedQuery> = [
-  (q) => ({ ...q, minRating: undefined, minReviews: undefined }),
-  (q) => ({ ...q, freeShippingOnly: false, inStockOnly: false }),
-  (q) => ({ ...q, price: undefined }),
-  (q) => ({ ...q, store: undefined }),
-  (q) => ({ ...q, brand: undefined }),
-]
-
 export function searchWithFallback(query: ResolvedQuery, limit = 24): SearchResult {
-  const first = searchProducts(query, PRODUCTS, limit)
-  if (first.confidence !== 'none') return first
-
-  for (const relax of RELAX_ORDER) {
-    const attempt = searchProducts(relax(query), PRODUCTS, limit)
-    if (attempt.confidence !== 'none') {
-      return { ...attempt, relaxed: true }
-    }
-  }
-
-  // Nothing found even after relaxation — return the honest 'none' result.
-  return first
+  // We no longer progressively relax filters (silently broadening the search).
+  // If the user asks for a strict set of constraints and we have only 1-2 matches,
+  // we return those 1-2 matches. If we have 0, we return 0.
+  return searchProducts(query, PRODUCTS, limit)
 }
 
 /* -------------------------------------------------------------------------- */

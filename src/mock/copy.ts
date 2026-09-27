@@ -90,7 +90,7 @@ export function buildReply(query: ResolvedQuery, result: SearchResult): string {
   return `${opener}\n\n${lead}.${body}`
 }
 
-export function buildMeta(query: ResolvedQuery, products: Product[]): string {
+export function buildMeta(_query: ResolvedQuery, products: Product[]): string {
   if (products.length === 0) return ''
   const stores = new Set(products.map((product) => product.store))
   const delivered = products.filter((product) => product.inStock).length

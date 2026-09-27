@@ -126,7 +126,7 @@ const BLUEPRINTS: SectionBlueprint[] = [
     subtitle: () => 'What everyone else is sifting through this week',
     glyph: '📈',
     weight: 60,
-    build: (ctx) => {
+    build: (_ctx) => {
       const pool = PRODUCTS.filter((product) => product.rating >= 4.4)
       return [...pool]
         .sort((a, b) => b.reviewCount / (b.price || 1) - a.reviewCount / (a.price || 1))

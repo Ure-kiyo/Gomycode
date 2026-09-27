@@ -33,7 +33,6 @@ export function AccountPage() {
   const savedIds = useUserStore((state) => state.savedProductIds)
   const history = useUserStore((state) => state.searchHistory)
   const preferences = useUserStore((state) => state.preferences)
-  const toggleSave = useUserStore((state) => state.toggleSave)
   const toggleCategory = useUserStore((state) => state.toggleCategory)
   const setNotification = useUserStore((state) => state.setNotification)
   const clearHistory = useUserStore((state) => state.clearSearchHistory)

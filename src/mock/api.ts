@@ -9,7 +9,7 @@ import type {
 } from '@/types'
 import { buildMeta, buildProgress, buildReply, buildSuggestions } from './copy'
 import { CATEGORIES, STORES } from '@/constants/taxonomy'
-import { PRODUCTS, getProductById } from './products'
+import { getProductById } from './products'
 import { resolveQuery } from './queryResolver'
 import { buildFeed } from './recommendationEngine'
 import { searchWithFallback } from './searchEngine'

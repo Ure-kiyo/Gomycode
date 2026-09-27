@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { AppHeader, HeaderAction } from '@/components/layout/AppHeader'
 import { SectionCarousel } from '@/components/feed/SectionCarousel'
-import { EmptyState } from '@/components/ui/EmptyState'
 import { SparkleIcon, RefreshIcon } from '@/components/ui/icons'
 import { ROUTE_PATHS } from '@/constants/app'
 import { usePullToRefresh } from '@/hooks/usePullToRefresh'
@@ -161,7 +160,7 @@ export function ForYouPage() {
               </h1>
             </div>
 
-            {sections.map((section, index) => (
+            {sections.map((section) => (
               <SectionCarousel
                 key={section.id}
                 products={section.products}

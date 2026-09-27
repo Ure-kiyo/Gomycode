@@ -17,18 +17,18 @@
     Arial, 'Noto Sans', sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  /* Brand - Teal/Emerald */
+  /* Brand - #00C9B7 */
   --color-brand-50: #e6faf7;
   --color-brand-100: #ccf5ef;
   --color-brand-200: #99ebe0;
   --color-brand-300: #4dd9c8;
   --color-brand-400: #1ac4ad;
-  --color-brand-500: #00A896;
-  --color-brand-600: #008577;
-  --color-brand-700: #006359;
-  --color-brand-800: #00423c;
-  --color-brand-900: #002120;
-  --color-brand-950: #001110;
+  --color-brand-500: #00C9B7;
+  --color-brand-600: #00A896;
+  --color-brand-700: #008577;
+  --color-brand-800: #006359;
+  --color-brand-900: #00423c;
+  --color-brand-950: #002120;
 
   --radius-xl2: 1.125rem;
   --radius-4xl: 2rem;
@@ -147,12 +147,12 @@
   --ink-muted: #464555;
   --ink-subtle: #777587;
   --ink-inverse: #ffffff;
-  --brand: #FF6F61;
-  --brand-soft: #FFF1F0;
-  --on-brand: #ffffff;
-  --positive: #0f9d6e;
-  --caution: #fd761a;
-  --critical: #ba1a1a;
+  --brand: #00C9B7;
+  --brand-soft: rgba(0, 201, 183, 0.12);
+  --on-brand: #000000;
+  --positive: #00C9B7;
+  --caution: #00C9B7;
+  --critical: #ef4444;
   
   /* Bottom tab bar / composer clearance for iPhone home indicator. */
   --tabbar-h: 4.25rem;
@@ -167,7 +167,7 @@
   --surface:          #111111;   /* card / input surface */
   --surface-sunken:   #000000;   /* page background — pure black */
   --surface-raised:   #1A1A1A;   /* popovers, sheets */
-  --surface-inverse:  #eef0ff;
+  --surface-inverse:  #ffffff;
 
   /* Borders — very subtle, just enough to separate cards */
   --line:             rgba(255,255,255,0.08);
@@ -179,15 +179,15 @@
   --ink-subtle:       #6E6E7A;   /* tertiary: labels, timestamps */
   --ink-inverse:      #131b2e;
 
-  /* Brand — Coral */
-  --brand:            #FF6F61;
-  --brand-soft:       #331512;
-  --on-brand:         #ffffff;
+  /* Brand — #00C9B7 & Black */
+  --brand:            #00C9B7;
+  --brand-soft:       rgba(0, 201, 183, 0.15);
+  --on-brand:         #000000;
 
-  /* Status colours — saturated enough to stand out on dark */
-  --positive:         #34d399;
-  --caution:          #fb923c;
-  --critical:         #f87171;
+  /* Status colours — matching minimal palette */
+  --positive:         #00C9B7;
+  --caution:          #00C9B7;
+  --critical:         #ef4444;
 
   color-scheme: dark;
 }

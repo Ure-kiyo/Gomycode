@@ -56,6 +56,7 @@ export interface UserState {
   searchHistory: SearchHistoryEntry[]
   preferences: typeof DEFAULT_PREFERENCES
 
+  setProfile: (profile: UserProfile | null) => void
   loadProfile: () => Promise<void>
   /** Flips the app out of the first-run state. Idempotent. */
   markInteracted: () => void
@@ -87,15 +88,16 @@ export const useUserStore = create<UserState>()(
       searchHistory: [],
       preferences: DEFAULT_PREFERENCES,
 
+      setProfile: (profile) => set({ profile, hasInteracted: true, isNewUser: false }),
+
       loadProfile: async () => {
-        // If they have already completed the auth flow (either as guest or logged in),
-        // we respect their persisted state and skip hydrating the mock profile.
-        if (get().hasInteracted) return
+        // If user is already logged in or interacted, keep their session intact
+        if (get().hasInteracted || get().profile) return
 
         const { api } = await import('@/services')
         try {
           const profile = await api.getProfile()
-          set({ profile, profileError: null })
+          set({ profile, profileError: null, hasInteracted: true, isNewUser: false })
         } catch (error) {
           set({ profileError: error instanceof Error ? error.message : 'Could not load profile.' })
         }

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import { api } from '@/services'
 import type { FeedResponse, FeedSection, Product } from '@/types'
-import { asyncState, toErrorMessage, type AsyncState } from '@/utils/asyncState'
+import { toErrorMessage } from '@/utils/asyncState'
 
 /**
  * Product data cache.
@@ -13,7 +13,10 @@ import { asyncState, toErrorMessage, type AsyncState } from '@/utils/asyncState'
  * truth for interaction state, which lives in `useUserStore`.
  */
 
-export interface FeedState extends AsyncState<FeedResponse> {
+export interface FeedState {
+  status: 'idle' | 'loading' | 'success' | 'error'
+  data: FeedResponse | null
+  error: string | null
   /** Incremented on pull-to-refresh; passed to the recommender as a seed. */
   seed: number
   /** Bumped whenever interaction state changes, to trigger a re-personalise. */
@@ -46,10 +49,12 @@ export const useCatalogStore = create<CatalogState>((set, get) => ({
   inflight: {},
 
   feed: {
-    ...asyncState.idle<FeedResponse>(),
+    status: 'idle' as const,
+    data: null,
+    error: null,
     seed: 0,
     revision: 0,
-  },
+  } as FeedState,
 
   getProduct: (id) => get().products[id],
 
@@ -75,17 +80,17 @@ export const useCatalogStore = create<CatalogState>((set, get) => ({
   refresh: async ({ reseed = false } = {}) => {
     const { feed } = get()
     const seed = reseed ? feed.seed + 1 : feed.seed
-    set({ feed: { ...feed, ...asyncState.loading(feed.data), seed } })
+    set({ feed: { ...feed, status: 'loading', error: null, seed } })
 
     try {
       // Imported lazily to avoid a circular import at module-evaluation time.
       const { selectSignals, useUserStore } = await import('@/store/useUserStore')
       const signals = selectSignals(useUserStore.getState(), new Map(Object.entries(get().products)))
       const feedResponse = await api.getFeed(signals, { seed })
-      set((state) => ({ feed: { ...asyncState.success(feedResponse), seed, revision: state.feed.revision } }))
+      set((state) => ({ feed: { status: 'success', data: feedResponse, error: null, seed, revision: state.feed.revision } }))
     } catch (error) {
       set((state) => ({
-        feed: { ...state.feed, ...asyncState.error<FeedResponse>(toErrorMessage(error)) },
+        feed: { ...state.feed, status: 'error', data: null, error: toErrorMessage(error) },
       }))
     }
   },
